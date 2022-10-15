@@ -1,43 +1,45 @@
 let boton_buscar = document.getElementById("boton_buscar");
+const API = 'https://rickandmortyapi.com/api/character';
 
 boton_buscar.addEventListener('click', () => {
-
+    getData(API);
     let buscador_contenido = document.getElementById("buscador").value;
     console.log(buscador_contenido);
 })
 
-document.addEventListener('click', function(){
-    fetch('https://rickandmortyapi.com/api/character')
-    .then((response) => response.json())
-    .then((json) => printData(json))
-})
-
+const getData = (urlAPI) => {
+    fetch(urlAPI)
+    .then(response => response.json())
+    .then(json => {
+        printData(json),
+        printPagination(json.info)})
+    }
+    
 function printData(data){
+    let html = ''
     data.results.forEach(element => {
-        const html = ''
-        html +=  `<div class="card" style="width: 13rem;">`
-        html +=  `<img src="${data.results.image}" class="card-img-top" alt="..."></img>`
-        html +=  `  <div class="card-body">`
-        html +=  `<h8 class="card-status">${data.results.status}</h8>`
+        html +=  `<div class="col mt-5">`
+        html +=  `<div class="card" style="width: 15rem;">`
+        html +=  `<img src="${element.image}" class="card-img-top" alt="..."></img>`
         html +=  `<div class="card-body">`
-        html +=  `<h5 class="card-name">${data.results.name}</h5>`
-        html +=  `<p class="card-gender">${data.results.gender}</p>`
-        html +=  `<p class="card-species">${data.results.species}</p>`
+        html +=  `<h8 class="card-status">${element.status}</h8>`
+        html +=  `<h5 class="card-name">${element.name}</h5>`
+        html +=  `<p class="card-gender">${element.gender}</p>`
+        html +=  `<p class="card-species">${element.species}</p>`
         html +=  `</div></div></div>`
     });
-
+    document.getElementById('infoCharacters').innerHTML = html;
 }
 
+const printPagination = (info) =>{
+    let prevDisable = info.prev == null ? 'disabled' : '';
+    let nextDisable = info.next == null ? 'disabled' : '';
 
+    let html = `<li class="page-item" ${prevDisable}><a class="page-link" onclick="getData('${info.prev}')">Previous</a></li>`
+    html += ` <li class="page-item" ${nextDisable}><a class="page-link" onclick="getData('${info.next}')">Next</a></li>`
+    document.getElementById('pagination').innerHTML = html;
+}
 
-<div class="card" style="width: 18rem;">
-  <img src="..." class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>
 //fetch('http://example.com/movies.json')
   //.then(response => response.json())
   //.then(data => console.log(data));
